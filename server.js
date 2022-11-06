@@ -46,7 +46,9 @@ io.on("connection", (socket) => {
 
   socket.on("chatMessage", (msg) => {
     const user = getCurUser(socket.id);
-    io.to(user.room).emit("message", format(user.username, msg));
+    const message = JSON.parse(msg);
+    console.log(message);
+    io.to(user.room).emit("message", format(user.username, message.msg));
   });
 
   // broadcast when the user leaves the chat

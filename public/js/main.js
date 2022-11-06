@@ -2,7 +2,7 @@ const chatForm = document.getElementById("chat-form");
 const chatMessage = document.querySelector(".chat-messages");
 const roomName = document.getElementById("room-name");
 const userList = document.getElementById("users");
-
+//const format = require("./utils/format");
 // getting user name and room from the query string
 
 const { username, room } = Qs.parse(location.search, {
@@ -35,9 +35,11 @@ chatForm.addEventListener("submit", (e) => {
 
   // getting the message
   const msg = e.target.elements.msg.value;
+  const MessageObject = { msg, username, room };
+  console.log(MessageObject);
 
   // emitting the message directly to the server.
-  socket.emit("chatMessage", msg);
+  socket.emit("chatMessage", JSON.stringify(MessageObject));
 
   // clear input
   e.target.elements.msg.value = "";
