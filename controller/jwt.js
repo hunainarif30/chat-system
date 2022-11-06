@@ -1,4 +1,4 @@
-const jose = require('jose')
+const jose = require("jose");
 
 function generateEncryptedJwt(subject, payload, secret) {
   return new jose.EncryptJWT(payload)
@@ -10,15 +10,14 @@ function generateEncryptedJwt(subject, payload, secret) {
     .setExpirationTime("1d")
     .encrypt(secret);
 }
-const decryptJwt = async (jwt, secret) => {
-	const options = {
-		issuer: "https://fast.com",
-		audience: "https://example.com/test",
-		contentEncryptionAlgorithms: ["A256GCM"],
-		keyManagementAlgorithms: ["dir"],
-	};
-	return jose.jwtDecrypt(jwt, secret, options);
-};
+// const decryptJwt = async (jwt, secret) => {
+// 	const options = {
+// 		issuer: "https://fast.com",
+// 		audience: "https://example.com/test",
+// 		contentEncryptionAlgorithms: ["A256GCM"],
+// 		keyManagementAlgorithms: ["dir"],
+// 	};
+// 	return jose.jwtDecrypt(jwt, secret, options);
+// };
 
-
-module.exports = {generateEncryptedJwt,decryptJwt};
+module.exports = generateEncryptedJwt;

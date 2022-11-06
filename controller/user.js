@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const { compareSync } = require("bcrypt");
+const { compare, hash } = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const generateEncryptedJwt = require("./jwt");
@@ -14,6 +15,7 @@ const userRegister = async (req, res) => {
       email: req.body.email,
       password: hashPass,
     });
+    console.log(req.body);
     return res.status(200).json({ Response: "Successfully signed up" });
   } catch (err) {
     return res.status(404).send({ Response: "Email already registered" });
@@ -33,6 +35,7 @@ const userLogin = async (req, res) => {
     if (!validPassword) {
       return res.status(404).send({ message: "Wrong Password" });
     } else {
+      console.log(req.body);
       const secret = Buffer.from(
         "62197fc8886bd3b739dd2cc8aa109d0be93acdea64c07b8908168b80daf1dc47",
         "hex"
@@ -46,21 +49,14 @@ const userLogin = async (req, res) => {
         payload,
         secret
       );
-      //   const token = jwt.sign(
-      //     {
-      //       name: user.name,
-      //       email: user.email,
-      //     },
-      //     "Stack",
-      //     {
-      //       expiresIn: "1m",
-      //     },
-      //     "secrettoken123"
-      //   );
-
+      jwt.verify(encryptedJwt, secret, function (err, decode) {
+        if (err) {
+         // console.log("token expires");
+        }
+      });
       return res
         .status(200)
-        .json({ message: "Successfully Logged In", token: encryptedJwt });
+        .json({ message: "Successfully Logged In", token: encryptedJwt }).redirect('/');
     }
   }
 };
