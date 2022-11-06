@@ -4,6 +4,9 @@ const { compare, hash } = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const generateEncryptedJwt = require("./jwt");
+const express = require("express");
+const app = express();
+const path = require("path");
 
 //Register User
 const userRegister = async (req, res) => {
@@ -16,7 +19,7 @@ const userRegister = async (req, res) => {
       password: hashPass,
     });
     console.log(req.body);
-    return res.status(200).json({ Response: "Successfully signed up" });
+    return res.status(200).redirect("/");
   } catch (err) {
     return res.status(404).send({ Response: "Email already registered" });
   }
@@ -33,7 +36,7 @@ const userLogin = async (req, res) => {
   } else {
     const validPassword = compareSync(req.body.password, user.password);
     if (!validPassword) {
-      return res.status(404).send({ message: "Wrong Password" });
+      return res.status(404).redirect("/");
     } else {
       console.log(req.body);
       const secret = Buffer.from(
@@ -51,12 +54,10 @@ const userLogin = async (req, res) => {
       );
       jwt.verify(encryptedJwt, secret, function (err, decode) {
         if (err) {
-         // console.log("token expires");
+          // console.log("token expires");
         }
       });
-      return res
-        .status(200)
-        .json({ message: "Successfully Logged In", token: encryptedJwt }).redirect('/');
+      return res.status(200).redirect("/welcome");
     }
   }
 };

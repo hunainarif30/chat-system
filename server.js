@@ -5,7 +5,7 @@ const app = express();
 var mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
-const currDir = path.join(__dirname + "/localStorage/");
+const currDir = path.join(__dirname + "/static/");
 
 app.use(bodyParser.json());
 app.use(express.static("public"));
@@ -23,11 +23,14 @@ db.on("error", () => console.log("Error connecting to db"));
 db.once("open", () => console.log("Connection successful"));
 
 app.get("/register", (req, res) => {
-  res.sendFile(currDir + "index.html");
+  res.sendFile(currDir + "signup.html");
 });
 
 app.get("/", (req, res) => {
   res.sendFile(currDir + "login.html");
+});
+app.get("/welcome", (req, res) => {
+  res.sendFile(currDir + "welcome.html");
 });
 
 app.use("/api", userRoutes);
