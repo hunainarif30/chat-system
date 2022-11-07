@@ -24,6 +24,12 @@ const userRegister = async (req, res) => {
     return res.status(404).send({ Response: "Email already registered" });
   }
 };
+const userChat =(req , res) =>{
+    // if room exists return response
+    const user = {name : req.body.username , room: req.body.room}
+    console.log(user)
+    res.status(200).redirect("/chat")
+}
 
 // Login User
 
@@ -61,4 +67,4 @@ const userLogin = async (req, res) => {
     }
   }
 };
-module.exports = { userRegister, userLogin };
+module.exports = { userRegister, userLogin,userChat };

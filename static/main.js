@@ -5,11 +5,19 @@ const userList = document.getElementById("users");
 //const format = require("./utils/format");
 // getting user name and room from the query string
 
-const { username, room } = Qs.parse(location.search, {
-  ignoreQueryPrefix: true,
-});
+// console.log(chatForm);
 
+// console.log(chatMessage);
+// console.log(roomName);
+// console.log(userList);
+// const { username, room } = Qs.parse(location.search, {
+//   ignoreQueryPrefix: true,
+// });
+
+const username = "areeb";
+const room = "javaScript";
 const socket = io();
+console.log(username);
 
 // join chatroom
 socket.emit("joinRoom", { username, room });
