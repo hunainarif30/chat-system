@@ -1,12 +1,8 @@
 const bcrypt = require("bcrypt");
 const { compareSync } = require("bcrypt");
-const { compare, hash } = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const generateEncryptedJwt = require("./jwt");
-const express = require("express");
-const app = express();
-const path = require("path");
 
 //Register User
 const userRegister = async (req, res) => {
@@ -23,6 +19,12 @@ const userRegister = async (req, res) => {
   } catch (err) {
     return res.status(404).send({ Response: "Email already registered" });
   }
+};
+const userChat = (req, res) => {
+  // if room exists return response
+  const user = { name: req.body.username, room: req.body.room };
+  console.log('user name room me dalte we ', user);
+  res.status(200).redirect("/chat");
 };
 
 // Login User
@@ -61,4 +63,4 @@ const userLogin = async (req, res) => {
     }
   }
 };
-module.exports = { userRegister, userLogin };
+module.exports = { userRegister, userLogin, userChat };
