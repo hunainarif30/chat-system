@@ -2,7 +2,9 @@ const bcrypt = require("bcrypt");
 const { compareSync } = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
-const generateEncryptedJwt = require("./jwt");
+const { generateEncryptedJwt, decrypJwt } = require("./jwt");
+const url = require("url");
+require("dotenv").config();
 
 //Register User
 const userRegister = async (req, res) => {
@@ -20,14 +22,29 @@ const userRegister = async (req, res) => {
     return res.status(404).send({ Response: "Email already registered" });
   }
 };
+
+const welcome = (req, res) => {};
+
 const userChat = (req, res) => {
   // if room exists return response
   const user = { name: req.body.username, room: req.body.room };
-  console.log('user name room me dalte we ', user);
-  res.status(200).redirect("/chat");
+
+  res.redirect(
+    url.format({
+      pathname: "/chat",
+      query: {
+        data: encodeURIComponent(
+          JSON.stringify({
+            username: user.name,
+            room: user.room,
+          })
+        ),
+      },
+    })
+  );
 };
 
-// Login User
+// Login Use
 
 const userLogin = async (req, res) => {
   const user = await User.findOne({
@@ -40,27 +57,15 @@ const userLogin = async (req, res) => {
     if (!validPassword) {
       return res.status(404).redirect("/");
     } else {
-      console.log(req.body);
-      const secret = Buffer.from(
-        "62197fc8886bd3b739dd2cc8aa109d0be93acdea64c07b8908168b80daf1dc47",
-        "hex"
-      );
+      const secret = Buffer.from(process.env.SECRET_KEY, "hex");
       const payload = {
         name: user.name,
         email: user.email,
       };
-      const encryptedJwt = await generateEncryptedJwt(
-        "testsub",
-        payload,
-        secret
-      );
-      jwt.verify(encryptedJwt, secret, function (err, decode) {
-        if (err) {
-          // console.log("token expires");
-        }
-      });
-      return res.status(200).redirect("/welcome");
+      var encryptedJwt = await generateEncryptedJwt("testsub", payload, secret);
+
+      return res.status(200).cookie("token", encryptedJwt).redirect("/welcome");
     }
   }
 };
-module.exports = { userRegister, userLogin, userChat };
+module.exports = { userRegister, userLogin, userChat, welcome };

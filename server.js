@@ -8,6 +8,8 @@ const http = require("http");
 const socketio = require("socket.io");
 const format = require("./utils/format");
 const amqp = require("amqplib/callback_api");
+const auth = require('./middlewares/verify_jwt');
+
 const {
   userJoin,
   getCurUser,
@@ -22,6 +24,7 @@ app.use(bodyParser.json());
 app.use("/public", express.static(currDirPublic));
 app.use("/static", express.static(currDirStatic));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 const server = http.createServer(app);
 
 mongoose
@@ -40,15 +43,13 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  console.log("login");
   res.sendFile(currDirStatic + "login.html");
 });
-app.get("/welcome", (req, res) => {
-  console.log("welcome");
+app.get("/welcome",auth, (req, res) => {
   res.sendFile(currDirPublic + "index.html");
 });
 
-app.get("/chat", (req, res) => {
+app.get("/chat", auth , (req, res) => {
   res.sendFile(currDirPublic + "chat.html");
 });
 
@@ -73,7 +74,6 @@ amqp.connect("amqp://localhost", function (error, connection) {
 // run when the client connects
 // sockets k sarey functions ka pehla argument event ka naam hota hai or dusra paramenter any method or message
 io.on("connection", (socket) => {
-  console.log("gere");
   socket.on("joinRoom", ({ username, room }) => {
     const user = userJoin(socket.id, username, room);
     socket.join(user.room);
@@ -99,7 +99,6 @@ io.on("connection", (socket) => {
   // aik naya event lia client se or usko pass krdia wapis se client ko
 
   socket.on("chatMessage", (msg) => {
-    console.log("message in server", msg);
     const user = getCurUser(socket.id);
     const message = JSON.parse(msg);
 

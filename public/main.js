@@ -6,12 +6,14 @@ const userList = document.getElementById("users");
 //const format = require("./utils/format");
 // getting user name and room from the query string
 
-const { username, room } = Qs.parse(location.search, {
-  ignoreQueryPrefix: true,
-});
+// const query = Qs.parse(location.search, {
+//   ignoreQueryPrefix: true,
+// });
+const urlSearch = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearch.entries());
 
-
-
+const { username, room, token } = JSON.parse(decodeURIComponent(params.data));
+console.log(token);
 const socket = io();
 
 // join chatroom
@@ -24,7 +26,7 @@ socket.on("roomUsers", ({ room, users }) => {
 });
 
 socket.on("message", (message) => {
- // console.log(message);
+  // console.log(message);
   //handling the output that shows the msgs
   outputMessages(message);
 
@@ -39,7 +41,7 @@ chatForm.addEventListener("submit", (e) => {
   // getting the message
   const msg = e.target.elements.msg.value;
   const MessageObject = { msg, username, room };
-  console.log('message object going :' + MessageObject);
+  console.log("message object going :" + MessageObject);
 
   // emitting the message directly to the server.
   socket.emit("chatMessage", JSON.stringify(MessageObject));
@@ -52,7 +54,7 @@ chatForm.addEventListener("submit", (e) => {
 // this function is responsible for making the div of each msg and then appending it to the chat msg class so that is show each time.
 function outputMessages(message) {
   // creating a div each time a msg/event is triggered
-  
+
   const div = document.createElement("div");
   div.classList.add("message");
   // setting the inner html of the div

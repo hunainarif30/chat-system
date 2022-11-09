@@ -6,18 +6,18 @@ function generateEncryptedJwt(subject, payload, secret) {
     .setIssuedAt()
     .setSubject(subject)
     .setIssuer("https://fast.com")
-    .setAudience(payload.name)
-    .setExpirationTime("1d")
+    .setAudience("https://example.com/test")
+    .setExpirationTime("5s")
     .encrypt(secret);
 }
-// const decryptJwt = async (jwt, secret) => {
-// 	const options = {
-// 		issuer: "https://fast.com",
-// 		audience: "https://example.com/test",
-// 		contentEncryptionAlgorithms: ["A256GCM"],
-// 		keyManagementAlgorithms: ["dir"],
-// 	};
-// 	return jose.jwtDecrypt(jwt, secret, options);
-// };
+function decryptJwt(jwt, secret) {
+  const options = {
+    issuer: "https://fast.com",
+    audience: "https://example.com/test",
+    contentEncryptionAlgorithms: ["A256GCM"],
+    keyManagementAlgorithms: ["dir"],
+  };
+  return jose.jwtDecrypt(jwt, secret, options);
+}
 
-module.exports = generateEncryptedJwt;
+module.exports = { generateEncryptedJwt, decryptJwt };
